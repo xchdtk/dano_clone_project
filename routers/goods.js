@@ -39,8 +39,9 @@ router.get('/items/:goodsId', middleware, async(req, res) => {
 router.get('/carts', middleware, async(req, res) => {
     try{
         carts = await Cart.findOne({
-            userId : res.locals.user
+            userId : res.locals.user.userId
         })
+        console.log(res.locals.user.userId)
 
         res.status(200).send({
             carts : carts 
@@ -51,11 +52,11 @@ router.get('/carts', middleware, async(req, res) => {
 })
 
 // 장바구니 추가
-router.post('/carts/:goodsId', async(req, res) => {
+router.post('/carts/:goodsId', middleware, async(req, res) => {
     try{
         const { option, quantity } = req.body
-        const { goodsId } = req.params
-        
+        const { goodsId }          = req.params
+        const { userId }           = res.locals.user
         if(!option) {
             res.status(401).send({
                 errorMessage : "선택한 상품이 없습니다."
@@ -67,17 +68,17 @@ router.post('/carts/:goodsId', async(req, res) => {
             cart_count = count;
           });
         
-        cart = await Cart.findOne({ goodsId : goodsId, option: option })
+        cart = await Cart.findOne({ userId : userId, goodsId : goodsId, option: option })
         
         if (cart) {
-            await Cart.updateOne({goodsId: goodsId, option: option}, {$set : {quantity : cart.quantity + quantity}});
+            await Cart.updateOne({userId : userId, goodsId: goodsId, option: option}, {$set : {quantity : cart.quantity + quantity}});
             res.status(201).send({
                 "result" : "장바구니에 담겼습니다."
             })
             return
         }
 
-        await Cart.create({cartId: cart_count+1, userId:1 ,goodsId: goodsId, option: option, quantity: quantity})
+        await Cart.create({cartId: cart_count+1, userId:userId ,goodsId: goodsId, option: option, quantity: quantity})
         res.status(201).send({
             "result" : "장바구니에 담겼습니다."
         })
