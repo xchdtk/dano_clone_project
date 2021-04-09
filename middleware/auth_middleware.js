@@ -1,5 +1,5 @@
 const jwt      = require('jsonwebtoken') 
-const { User } = require('../schemas')
+const User     = require('../schemas/users')
 
 const secret   = require('../secret')
 
@@ -15,10 +15,11 @@ module.exports = async(req, res, next) => {
     }
     
     try{
-        const {userId } = jwt.verify(auth_token, secret)
+        const { userId } = jwt.verify(auth_token, secret)
         console.log(userId)
-        user = await User.findById({userId})
+        user = await User.findOne({userId : userId})
         res.locals.user = user 
+        next()
     }catch(err) {
         console.log(err)
         res.status(401).send({

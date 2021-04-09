@@ -4,8 +4,9 @@ const Goods           = require("../schemas/goods");
 const Cart           = require("../schemas/carts");
 const router          = express.Router();
 
-middelware            = require("../middleware/auth_middleware")
+middleware            = require("../middleware/auth_middleware")
 
+// 메인페이지(전체상품)
 router.get('/items', async(req, res) => {
     try{
         const items = await Goods.find({})
@@ -18,10 +19,12 @@ router.get('/items', async(req, res) => {
         }    
 })
 
-router.get('/items/:goodsId', async(req, res) => {
+
+// 상세페이지(해당하는 상품)
+router.get('/items/:goodsId', middleware, async(req, res) => {
     try{
         const { goodsId } = req.params
-        const items = await Goods.find({ _id : goodsId })
+        const items = await Goods.find({ goodsId : goodsId })
         res.status(200).send({
             "ok"     : true,
             "result" : items 
@@ -32,14 +35,22 @@ router.get('/items/:goodsId', async(req, res) => {
 })
 
 
-// router.get('/carts', middleware, async(req, res) => {
-//     try{
-        
-//     }catch(err) {
-//         console.log(err)
-//     }
-// })
+// 장바구니 보여주기
+router.get('/carts', middleware, async(req, res) => {
+    try{
+        carts = await Cart.findOne({
+            userId : res.locals.user
+        })
 
+        res.status(200).send({
+            carts : carts 
+        })
+    }catch(err) {
+        console.log(err)
+    }
+})
+
+// 장바구니 추가
 router.post('/carts/:goodsId', async(req, res) => {
     try{
         const { option, quantity } = req.body

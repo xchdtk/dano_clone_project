@@ -6,6 +6,8 @@ const User    = require("../schemas/users");
 const secret  = require('../secret')
 const router  = express.Router();
 middelware    = require("../middleware/auth_middleware")
+
+// 회원가입
 router.post('/register', async(req, res) => {
     try{
     const { nickname, email, password} = req.body;
@@ -76,6 +78,7 @@ router.post('/register', async(req, res) => {
     }    
 })
 
+//로그인
 router.post('/login', async(req, res) => {
     try{
         const { email, password } = req.body;
@@ -89,8 +92,7 @@ router.post('/login', async(req, res) => {
         }
         
         encoded_password = user.password   
-        
-        same =  bcrypt.compareSync(password, encoded_password)
+        const same       =  bcrypt.compareSync(password, encoded_password)
 
         if (!same) {
             res.status(401).send({
@@ -110,6 +112,7 @@ router.post('/login', async(req, res) => {
     
 })
 
+// 토크체크(자동 로그인 기능)
 router.get('/check', async(req, res) => {
     try {
         let { authorization }  = req.headers
