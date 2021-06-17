@@ -10,52 +10,51 @@ middelware    = require("../middleware/auth_middleware")
 // 회원가입
 router.post('/register', async(req, res) => {
     try{
-    const { nickname, email, password} = req.body;
-    console.log(nickname, email, password)
-    let user_count = 0
-    User.countDocuments({}, function (err, count) {
+        const { nickname, email, password} = req.body;
+        let user_count = 0
+        User.countDocuments({}, function (err, count) {
         user_count = count;
       });
 
-    if (!/^[a-z0-9_]*$/.test(nickname)) {
+        if (!/^[a-z0-9_]*$/.test(nickname)) {
         res.status(401).send({
             errorMessage: '닉네임은 대소문자와 숫자로만 이루어져야 합니다.',
         })
         return
-    }
+        }
 
-    if (nickname.length < 3) {
-        res.status(401).send({
-            errorMessage: '닉네임을 3자이상 입력해주세요.',
-        })
+        if (nickname.length < 3) {
+            res.status(401).send({
+                errorMessage: '닉네임을 3자이상 입력해주세요.',
+            })
         return
-    }
+        }
 
-    let existsnickname = await User.findOne({ nickname })
+        let existsnickname = await User.findOne({ nickname })
 
-    if (existsnickname) {
-        res.status(401).send({
-            errorMessage: '닉네임이 중복됐습니다.',
-        })
-        return
-    }
+        if (existsnickname) {
+            res.status(401).send({
+                errorMessage: '닉네임이 중복됐습니다.',
+            })
+            return
+        }
 
-    if (!/^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/){
-        console.log("#######")
+        if (!/^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/){
+        
         res.status(401).send({
             errorMessage: "아이디 형식을 지켜주세요"
         })
         return
-    }
+        }
 
-    let existsemail = await User.findOne({ email })
+        let existsemail = await User.findOne({ email })
 
-    if (existsemail) {
-        res.status(401).send({
-            errorMessage: '아이디가 중복됐습니다.',
-        })
-        return
-    }
+        if (existsemail) {
+            res.status(401).send({
+                errorMessage: '아이디가 중복됐습니다.',
+            })
+            return
+        }
 
     if (password.length < 4) {
         res.status(401).send({
@@ -101,7 +100,7 @@ router.post('/login', async(req, res) => {
             return
         }
         token = jwt.sign({userId : user.userId}, secret, {expiresIn : '10h'})
-	console.log(token)
+	    console.log(token, user.userId)
         res.status(201).send({
             token : token
         })

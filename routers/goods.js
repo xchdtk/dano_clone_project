@@ -41,7 +41,6 @@ router.get('/carts', middleware, async(req, res) => {
         carts = await Cart.findOne({
             userId : res.locals.user.userId
         })
-        console.log(res.locals.user.userId)
 
         res.status(200).send({
             carts : carts 
