@@ -9,6 +9,9 @@ router.get("/mains", ctrl.get_main);
 // 상세페이지(GET)
 router.get("/details", ctrl.get_detail);
 
+// 상품추가하기(PUSH)
+router.post("/add", ctrl.push_goods);
+
 // 장바구니(GET)
 router.get("/carts", middleware, ctrl.get_carts);
 

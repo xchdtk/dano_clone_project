@@ -1,6 +1,17 @@
 const Goods = require("../../schemas/goods");
 const Cart = require("../../schemas/carts");
 
+// 상품 추가하기
+exports.push_goods = async (req, res) => {
+  try {
+    await Goods.create({
+      goodsId: 1,
+    });
+    res.send("성공");
+  } catch (err) {
+    console.log(err);
+  }
+};
 // 메인페이지(GET)
 exports.get_main = async (req, res) => {
   try {

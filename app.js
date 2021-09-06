@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const connect = require("./schemas");
 const logger = require("morgan");
+const dotenv = require('dotenv');
 
 connect();
 
@@ -39,7 +40,13 @@ class App {
   }
 
   getRouting() {
-    this.app.use(require("./controllers"));
+    this.app.use("/api", require("./controllers"));
+    this.app.get("/apple", (req, res) => {
+      res.status(200).send({
+        ok: true,
+        result: "success",
+      });
+    });
   }
 }
 
